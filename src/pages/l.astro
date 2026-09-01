@@ -79,6 +79,7 @@ if (state) ogImage.searchParams.set('title', state.title);
 			buildMessageText,
 			buildWhatsAppLinks,
 		} from '../lib/list';
+		import { prefillNameInput, saveStoredName } from '../lib/stored-name';
 
 		const error = document.querySelector<HTMLDivElement>('#error')!;
 		const content = document.querySelector<HTMLDivElement>('#content')!;
@@ -91,6 +92,8 @@ if (state) ogImage.searchParams.set('title', state.title);
 		const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
 
 		const state = parseListFromSearch(window.location.search);
+
+		prefillNameInput(nameInput);
 
 		if (!state) {
 			error.hidden = false;
@@ -118,6 +121,7 @@ if (state) ogImage.searchParams.set('title', state.title);
 					return;
 				}
 				nameError.hidden = true;
+				saveStoredName(name);
 
 				const newState = addItem(state, name);
 				const link = buildListLink(`${location.origin}/l`, newState);

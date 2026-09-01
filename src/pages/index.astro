@@ -65,6 +65,7 @@ const ogImage = new URL('/api/og.png', Astro.site ?? Astro.url).toString();
 
 	<script>
 		import { createList, buildListLink, buildMessageText, buildWhatsAppLinks } from '../lib/list';
+		import { prefillNameInput, saveStoredName } from '../lib/stored-name';
 
 		const form = document.querySelector<HTMLFormElement>('#create-form')!;
 		const titleInput = document.querySelector<HTMLInputElement>('#title')!;
@@ -72,6 +73,8 @@ const ogImage = new URL('/api/og.png', Astro.site ?? Astro.url).toString();
 		const error = document.querySelector<HTMLParagraphElement>('#error')!;
 		const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
 		const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
+
+		prefillNameInput(nameInput);
 
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
@@ -85,6 +88,7 @@ const ogImage = new URL('/api/og.png', Astro.site ?? Astro.url).toString();
 				return;
 			}
 			error.hidden = true;
+			saveStoredName(name);
 
 			const state = createList(title, name);
 			const link = buildListLink(`${location.origin}/l`, state);
