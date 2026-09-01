@@ -1,17 +1,21 @@
+import { DEFAULT_LANG, isLang, t, type Lang } from './i18n';
+
 export interface ListState {
 	title: string;
 	items: string[];
+	lang: Lang;
 }
 
 export function sanitizeLine(value: string): string {
 	return value.replace(/[\r\n]+/g, ' ').trim();
 }
 
-export function createList(title: string, firstItemName: string): ListState {
+export function createList(title: string, firstItemName: string, lang: Lang = DEFAULT_LANG): ListState {
 	const item = sanitizeLine(firstItemName);
 	return {
 		title: sanitizeLine(title),
 		items: item ? [item] : [],
+		lang,
 	};
 }
 
@@ -19,6 +23,7 @@ export function addItem(state: ListState, name: string): ListState {
 	return {
 		title: state.title,
 		items: [...state.items, sanitizeLine(name)],
+		lang: state.lang,
 	};
 }
 
@@ -32,7 +37,10 @@ export function parseListFromSearch(search: string): ListState | null {
 		.map(sanitizeLine)
 		.filter(Boolean);
 
-	return { title, items };
+	const langParam = params.get('lang');
+	const lang = isLang(langParam) ? langParam : DEFAULT_LANG;
+
+	return { title, items, lang };
 }
 
 export function buildQueryString(state: ListState): string {
@@ -41,6 +49,7 @@ export function buildQueryString(state: ListState): string {
 	for (const item of state.items) {
 		params.append('i', item);
 	}
+	params.set('lang', state.lang);
 	return params.toString();
 }
 
@@ -52,7 +61,7 @@ export function buildMessageText(state: ListState, listLink: string): string {
 	return [
 		state.title,
 		...state.items.map((item) => `- ${item}`),
-		`add yourself: ${listLink}`,
+		`${t(state.lang).messageAddYourself}: ${listLink}`,
 	].join('\n');
 }
 

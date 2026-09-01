@@ -5,16 +5,18 @@ interface Props {
 	title: string;
 	description?: string;
 	ogImage?: string;
+	lang?: string;
 }
 
 const {
 	title,
 	description = 'Create a list and share it as a link in WhatsApp — no app, no signup.',
 	ogImage,
+	lang = 'en',
 } = Astro.props;
 ---
 
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />

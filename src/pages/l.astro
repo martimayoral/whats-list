@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { parseListFromSearch } from '../lib/list';
+import { t } from '../lib/i18n';
 
 // This page renders per-request (not prerendered) purely so the og:image / og:title
 // meta tags can reflect the list title from the `t` query param — link-preview crawlers
@@ -9,21 +10,20 @@ import { parseListFromSearch } from '../lib/list';
 export const prerender = false;
 
 const state = parseListFromSearch(Astro.url.search);
+const strings = t(state?.lang);
 
-const pageTitle = state ? `${state.title} · whats·list` : 'Add yourself · whats·list';
-const description = state
-	? `Join "${state.title}" and send your name straight to WhatsApp.`
-	: 'Add your name to a shared list and send it straight to WhatsApp.';
+const pageTitle = state ? `${state.title} · whats·list` : `${strings.joinPageTitleDefault} · whats·list`;
+const description = state ? strings.joinDescription(state.title) : strings.joinDescriptionDefault;
 
 const ogImage = new URL('/api/og.png', Astro.url.origin);
 if (state) ogImage.searchParams.set('title', state.title);
 ---
 
-<Layout title={pageTitle} description={description} ogImage={ogImage.toString()}>
+<Layout title={pageTitle} description={description} ogImage={ogImage.toString()} lang={state?.lang ?? 'en'}>
 	<div id="error" hidden class="relative rotate-1">
 		<span class="absolute -top-3 left-8 h-6 w-16 rotate-3 bg-red-300/80"></span>
 		<p class="rounded-lg border-[3px] border-black bg-white p-6 text-center font-mono text-sm font-bold text-red-600 shadow-[6px_6px_0_0_#111]">
-			This list link looks invalid or incomplete.
+			{strings.joinInvalid}
 		</p>
 	</div>
 
@@ -31,7 +31,7 @@ if (state) ogImage.searchParams.set('title', state.title);
 		<span class="absolute -top-3 left-8 h-6 w-16 -rotate-3 bg-[#8ECFF8]/80"></span>
 		<div class="rounded-lg border-[3px] border-black bg-white p-6 shadow-[6px_6px_0_0_#111] sm:p-8">
 			<span class="inline-block -rotate-1 rounded bg-black px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
-				shared list
+				{strings.joinBadge}
 			</span>
 			<h1 id="list-title" class="mt-3 font-display text-2xl font-bold tracking-tight wrap-break-word text-black"></h1>
 
@@ -40,7 +40,7 @@ if (state) ogImage.searchParams.set('title', state.title);
 			<form id="join-form" class="mt-6 flex flex-col gap-4 border-t-2 border-dashed border-black/20 pt-6">
 				<div>
 					<label for="name" class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70">
-						Your name
+						{strings.nameLabel}
 					</label>
 					<input
 						id="name"
@@ -48,7 +48,7 @@ if (state) ogImage.searchParams.set('title', state.title);
 						type="text"
 						autocomplete="off"
 						required
-						placeholder="Sam"
+						placeholder={strings.namePlaceholder}
 						class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black placeholder:text-black/35 focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
 					/>
 				</div>
@@ -56,19 +56,19 @@ if (state) ogImage.searchParams.set('title', state.title);
 					type="submit"
 					class="inline-flex items-center justify-center gap-2 rounded-md border-[3px] border-black bg-[#25D366] px-4 py-3.5 font-display text-base font-bold text-black shadow-[4px_4px_0_0_#111] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
 				>
-					Add yourself &amp; send
+					{strings.joinButton}
 					<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
 						<path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 					</svg>
 				</button>
-				<p id="name-error" hidden class="font-mono text-sm font-bold text-red-600">Please enter your name.</p>
+				<p id="name-error" hidden class="font-mono text-sm font-bold text-red-600">{strings.joinNameError}</p>
 			</form>
 		</div>
 	</div>
 
 	<p id="fallback-wrap" hidden class="mt-4 text-center font-mono text-sm text-black/60">
-		Didn't open WhatsApp?
-		<a id="fallback" class="font-bold text-black underline decoration-[#25D366] decoration-2 underline-offset-4">tap here</a>.
+		<span id="fallback-prompt">{strings.fallbackPrompt}</span>
+		<a id="fallback" class="font-bold text-black underline decoration-[#25D366] decoration-2 underline-offset-4">{strings.fallbackLink}</a>.
 	</p>
 
 	<script>

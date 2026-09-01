@@ -1,104 +1,208 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import { LANGUAGES, DEFAULT_LANG } from "../lib/i18n";
 
-const ogImage = new URL('/api/og.png', Astro.site ?? Astro.url).toString();
+const ogImage = new URL("/api/og.png", Astro.site ?? Astro.url).toString();
 ---
 
 <Layout title="whats·list" ogImage={ogImage}>
-	<div class="relative -rotate-1">
-		<span class="absolute -top-3 left-8 h-6 w-16 -rotate-3 bg-[#FFD966]/80"></span>
-		<div class="rounded-lg border-[3px] border-black bg-white p-6 shadow-[6px_6px_0_0_#111] sm:p-8">
-			<span class="inline-block -rotate-1 rounded bg-black px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-white">
-				new list
-			</span>
-			<h1 class="mt-3 font-display text-3xl font-bold tracking-tight text-black">Start a list</h1>
-			<p class="mt-1.5 font-mono text-sm text-black/60">Create it, then send the link straight to WhatsApp.</p>
+  <div class="relative -rotate-1">
+    <span class="absolute -top-3 left-8 h-6 w-16 -rotate-3 bg-[#FFD966]/80"
+    ></span>
+    <div
+      class="rounded-lg border-[3px] border-black bg-white p-6 shadow-[6px_6px_0_0_#111] sm:p-8"
+    >
+      <span
+        id="badge"
+        class="inline-block -rotate-1 rounded bg-black px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-white"
+      >
+        new list
+      </span>
+      <h1
+        id="heading"
+        class="mt-3 font-display text-3xl font-bold tracking-tight text-black"
+      >
+        Start a list
+      </h1>
+      <p id="subtitle" class="mt-1.5 font-mono text-sm text-black/60">
+        Create it, then send the link straight to WhatsApp.
+      </p>
 
-			<form id="create-form" class="mt-6 flex flex-col gap-4">
-				<div>
-					<label for="title" class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70">
-						List title
-					</label>
-					<input
-						id="title"
-						name="title"
-						type="text"
-						autocomplete="off"
-						required
-						placeholder="Beach trip snacks"
-						class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black placeholder:text-black/35 focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
-					/>
-				</div>
-				<div>
-					<label for="name" class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70">
-						Your name
-					</label>
-					<input
-						id="name"
-						name="name"
-						type="text"
-						autocomplete="off"
-						required
-						placeholder="Sam"
-						class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black placeholder:text-black/35 focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
-					/>
-				</div>
-				<button
-					type="submit"
-					class="mt-2 inline-flex items-center justify-center gap-2 rounded-md border-[3px] border-black bg-[#25D366] px-4 py-3.5 font-display text-base font-bold text-black shadow-[4px_4px_0_0_#111] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
-				>
-					Create list
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-						<path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-					</svg>
-				</button>
-			</form>
+      <form id="create-form" class="mt-6 flex flex-col gap-4">
+        <div>
+          <label
+            id="title-label"
+            for="title"
+            class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70"
+          >
+            List title
+          </label>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            autocomplete="off"
+            required
+            placeholder="Beach trip snacks"
+            class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black placeholder:text-black/35 focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
+          />
+        </div>
+        <div>
+          <label
+            id="name-label"
+            for="name"
+            class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70"
+          >
+            Your name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autocomplete="off"
+            required
+            placeholder="Sam"
+            class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black placeholder:text-black/35 focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
+          />
+        </div>
+        <div>
+          <label
+            id="lang-label"
+            for="lang"
+            class="mb-1.5 block font-mono text-xs font-bold uppercase tracking-wide text-black/70"
+          >
+            Language
+          </label>
+          <select
+            id="lang"
+            name="lang"
+            class="block w-full rounded-md border-2 border-black bg-[#f7f1e3] px-4 py-3 font-mono text-base text-black focus:-translate-x-0.5 focus:-translate-y-0.5 focus:bg-white focus:shadow-[3px_3px_0_0_#111] focus:outline-none"
+          >
+            {
+              LANGUAGES.map((option) => (
+                <option
+                  value={option.code}
+                  selected={option.code === DEFAULT_LANG}
+                >
+                  {option.flag} {option.label}
+                </option>
+              ))
+            }
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="mt-2 inline-flex items-center justify-center gap-2 rounded-md border-[3px] border-black bg-[#25D366] px-4 py-3.5 font-display text-base font-bold text-black shadow-[4px_4px_0_0_#111] transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
+        >
+          <span id="submit-label">Create list</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M2 8H14M14 8L9 3M14 8L9 13"
+              stroke="black"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </form>
 
-			<p id="error" hidden class="mt-4 font-mono text-sm font-bold text-red-600"></p>
+      <p
+        id="error"
+        hidden
+        class="mt-4 font-mono text-sm font-bold text-red-600"
+      >
+      </p>
 
-			<p id="fallback-wrap" hidden class="mt-4 font-mono text-sm text-black/60">
-				Didn't open WhatsApp?
-				<a id="fallback" class="font-bold text-black underline decoration-[#25D366] decoration-2 underline-offset-4">tap here</a>.
-			</p>
-		</div>
-	</div>
+      <p id="fallback-wrap" hidden class="mt-4 font-mono text-sm text-black/60">
+        <span id="fallback-prompt">Didn't open WhatsApp?</span>
+        <a
+          id="fallback"
+          class="font-bold text-black underline decoration-[#25D366] decoration-2 underline-offset-4"
+          >tap here</a
+        >.
+      </p>
+    </div>
+  </div>
 
-	<script>
-		import { createList, buildListLink, buildMessageText, buildWhatsAppLinks } from '../lib/list';
-		import { prefillNameInput, saveStoredName } from '../lib/stored-name';
+  <script>
+    import {
+      createList,
+      buildListLink,
+      buildMessageText,
+      buildWhatsAppLinks,
+    } from "../lib/list";
+    import { prefillNameInput, saveStoredName } from "../lib/stored-name";
+    import { t, isLang, DEFAULT_LANG, type Lang } from "../lib/i18n";
 
-		const form = document.querySelector<HTMLFormElement>('#create-form')!;
-		const titleInput = document.querySelector<HTMLInputElement>('#title')!;
-		const nameInput = document.querySelector<HTMLInputElement>('#name')!;
-		const error = document.querySelector<HTMLParagraphElement>('#error')!;
-		const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
-		const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
+    const form = document.querySelector<HTMLFormElement>("#create-form")!;
+    const titleInput = document.querySelector<HTMLInputElement>("#title")!;
+    const nameInput = document.querySelector<HTMLInputElement>("#name")!;
+    const langSelect = document.querySelector<HTMLSelectElement>("#lang")!;
+    const error = document.querySelector<HTMLParagraphElement>("#error")!;
+    const fallbackWrap =
+      document.querySelector<HTMLParagraphElement>("#fallback-wrap")!;
+    const fallback = document.querySelector<HTMLAnchorElement>("#fallback")!;
 
-		prefillNameInput(nameInput);
+    const badge = document.querySelector<HTMLSpanElement>("#badge")!;
+    const heading = document.querySelector<HTMLHeadingElement>("#heading")!;
+    const subtitle = document.querySelector<HTMLParagraphElement>("#subtitle")!;
+    const titleLabel =
+      document.querySelector<HTMLLabelElement>("#title-label")!;
+    const nameLabel = document.querySelector<HTMLLabelElement>("#name-label")!;
+    const langLabel = document.querySelector<HTMLLabelElement>("#lang-label")!;
+    const submitLabel =
+      document.querySelector<HTMLSpanElement>("#submit-label")!;
+    const fallbackPrompt =
+      document.querySelector<HTMLSpanElement>("#fallback-prompt")!;
 
-		form.addEventListener('submit', (event) => {
-			event.preventDefault();
+    let currentLang: Lang = DEFAULT_LANG;
 
-			const title = titleInput.value.trim();
-			const name = nameInput.value.trim();
+    function applyLang(lang: Lang): void {
+      currentLang = lang;
+      const strings = t(lang);
+      badge.textContent = strings.badge;
+      heading.textContent = strings.heading;
+      subtitle.textContent = strings.subtitle;
+      titleLabel.textContent = strings.titleLabel;
+      titleInput.placeholder = strings.titlePlaceholder;
+      nameLabel.textContent = strings.nameLabel;
+      nameInput.placeholder = strings.namePlaceholder;
+      langLabel.textContent = strings.languageLabel;
+      submitLabel.textContent = strings.createButton;
+      fallbackPrompt.textContent = strings.fallbackPrompt;
+      fallback.textContent = strings.fallbackLink;
+    }
 
-			if (!title || !name) {
-				error.textContent = 'Please enter a list title and your name.';
-				error.hidden = false;
-				return;
-			}
-			error.hidden = true;
-			saveStoredName(name);
+    langSelect.addEventListener("change", () => {
+      const value = langSelect.value;
+      if (isLang(value)) applyLang(value);
+    });
 
-			const state = createList(title, name);
-			const link = buildListLink(`${location.origin}/l`, state);
-			const message = buildMessageText(state, link);
-			const { appUrl, webUrl } = buildWhatsAppLinks(message);
+    prefillNameInput(nameInput);
 
-			fallback.href = webUrl;
-			fallbackWrap.hidden = false;
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
 
-			window.location.href = appUrl;
-		});
-	</script>
+      const title = titleInput.value.trim();
+      const name = nameInput.value.trim();
+
+      if (!title || !name) {
+        error.textContent = t(currentLang).createError;
+        error.hidden = false;
+        return;
+      }
+      error.hidden = true;
+      saveStoredName(name);
+
+      const state = createList(title, name, currentLang);
+      const link = buildListLink(`${location.origin}/l`, state);
+      const message = buildMessageText(state, link);
+      const { appUrl, webUrl } = buildWhatsAppLinks(message);
+
+      fallback.href = webUrl;
+      fallbackWrap.hidden = false;
+
+      window.location.href = appUrl;
+    });
+  </script>
 </Layout>
