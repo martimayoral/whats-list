@@ -1,8 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { parseListFromSearch } from '../lib/list';
+
+// This page renders per-request (not prerendered) purely so the og:image / og:title
+// meta tags can reflect the list title from the `t` query param — link-preview crawlers
+// (e.g. WhatsApp's) don't run the client-side script, so they only ever see server-rendered HTML.
+// The list UI itself still reads window.location.search client-side, same as before.
+export const prerender = false;
+
+const state = parseListFromSearch(Astro.url.search);
+
+const pageTitle = state ? `${state.title} · whats·list` : 'Add yourself · whats·list';
+const description = state
+	? `Join "${state.title}" and send your name straight to WhatsApp.`
+	: 'Add your name to a shared list and send it straight to WhatsApp.';
+
+const ogImage = new URL('/api/og.png', Astro.url.origin);
+if (state) ogImage.searchParams.set('title', state.title);
 ---
 
-<Layout title="Add yourself">
+<Layout title={pageTitle} description={description} ogImage={ogImage.toString()}>
 	<div id="error" hidden class="relative rotate-1">
 		<span class="absolute -top-3 left-8 h-6 w-16 rotate-3 bg-red-300/80"></span>
 		<p class="rounded-lg border-[3px] border-black bg-white p-6 text-center font-mono text-sm font-bold text-red-600 shadow-[6px_6px_0_0_#111]">

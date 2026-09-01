@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const ogImage = new URL('/api/og.png', Astro.site ?? Astro.url).toString();
 ---
 
-<Layout title="whats-list">
+<Layout title="whats·list" ogImage={ogImage}>
 	<div class="relative -rotate-1">
 		<span class="absolute -top-3 left-8 h-6 w-16 -rotate-3 bg-[#FFD966]/80"></span>
 		<div class="rounded-lg border-[3px] border-black bg-white p-6 shadow-[6px_6px_0_0_#111] sm:p-8">
