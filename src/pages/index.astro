@@ -9,9 +9,59 @@
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>whats-list</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<h1>Start a list</h1>
+		<form id="create-form">
+			<p>
+				<label for="title">List title</label><br />
+				<input id="title" name="title" type="text" autocomplete="off" required />
+			</p>
+			<p>
+				<label for="name">Your name</label><br />
+				<input id="name" name="name" type="text" autocomplete="off" required />
+			</p>
+			<button type="submit">Create list</button>
+		</form>
+		<p id="error" hidden></p>
+		<p id="fallback-wrap" hidden>
+			Didn't open WhatsApp? <a id="fallback">tap here</a>.
+		</p>
+
+		<script>
+			import { createList, buildListLink, buildMessageText, buildWhatsAppLinks } from '../lib/list';
+
+			const form = document.querySelector<HTMLFormElement>('#create-form')!;
+			const titleInput = document.querySelector<HTMLInputElement>('#title')!;
+			const nameInput = document.querySelector<HTMLInputElement>('#name')!;
+			const error = document.querySelector<HTMLParagraphElement>('#error')!;
+			const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
+			const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
+
+			form.addEventListener('submit', (event) => {
+				event.preventDefault();
+
+				const title = titleInput.value.trim();
+				const name = nameInput.value.trim();
+
+				if (!title || !name) {
+					error.textContent = 'Please enter a list title and your name.';
+					error.hidden = false;
+					return;
+				}
+				error.hidden = true;
+
+				const state = createList(title, name);
+				const link = buildListLink(`${location.origin}/l`, state);
+				const message = buildMessageText(state, link);
+				const { appUrl, webUrl } = buildWhatsAppLinks(message);
+
+				fallback.href = webUrl;
+				fallbackWrap.hidden = false;
+
+				window.location.href = appUrl;
+			});
+		</script>
 	</body>
 </html>
