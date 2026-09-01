@@ -1,88 +1,101 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Add yourself</title>
-	</head>
-	<body>
-		<p id="error" hidden>This list link looks invalid or incomplete.</p>
+<Layout title="Add yourself">
+	<p id="error" hidden class="rounded-2xl bg-white p-6 text-center text-sm font-medium text-red-600 shadow-sm ring-1 ring-gray-200">
+		This list link looks invalid or incomplete.
+	</p>
 
-		<div id="content" hidden>
-			<h1 id="list-title"></h1>
-			<ul id="list-items"></ul>
+	<div id="content" hidden class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 sm:p-8">
+		<h1 id="list-title" class="text-2xl font-bold tracking-tight text-gray-900"></h1>
 
-			<form id="join-form">
-				<p>
-					<label for="name">Your name</label><br />
-					<input id="name" name="name" type="text" autocomplete="off" required />
-				</p>
-				<button type="submit">Add yourself &amp; send to WhatsApp</button>
-			</form>
-			<p id="name-error" hidden>Please enter your name.</p>
-		</div>
+		<ul id="list-items" class="mt-4 flex flex-col gap-2"></ul>
 
-		<p id="fallback-wrap" hidden>
-			Didn't open WhatsApp? <a id="fallback">tap here</a>.
-		</p>
+		<form id="join-form" class="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6">
+			<div>
+				<label for="name" class="mb-1.5 block text-sm font-medium text-gray-700">Your name</label>
+				<input
+					id="name"
+					name="name"
+					type="text"
+					autocomplete="off"
+					required
+					placeholder="e.g. Sam"
+					class="block w-full rounded-xl border border-gray-300 px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+				/>
+			</div>
+			<button
+				type="submit"
+				class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 active:bg-emerald-800"
+			>
+				Add yourself &amp; send to WhatsApp
+			</button>
+			<p id="name-error" hidden class="text-sm font-medium text-red-600">Please enter your name.</p>
+		</form>
+	</div>
 
-		<script>
-			import {
-				parseListFromSearch,
-				addItem,
-				buildListLink,
-				buildMessageText,
-				buildWhatsAppLinks,
-			} from '../lib/list';
+	<p id="fallback-wrap" hidden class="mt-4 text-center text-sm text-gray-500">
+		Didn't open WhatsApp? <a id="fallback" class="font-medium text-emerald-600 underline underline-offset-2">tap here</a>.
+	</p>
 
-			const error = document.querySelector<HTMLParagraphElement>('#error')!;
-			const content = document.querySelector<HTMLDivElement>('#content')!;
-			const listTitle = document.querySelector<HTMLHeadingElement>('#list-title')!;
-			const listItems = document.querySelector<HTMLUListElement>('#list-items')!;
-			const form = document.querySelector<HTMLFormElement>('#join-form')!;
-			const nameInput = document.querySelector<HTMLInputElement>('#name')!;
-			const nameError = document.querySelector<HTMLParagraphElement>('#name-error')!;
-			const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
-			const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
+	<script>
+		import {
+			parseListFromSearch,
+			addItem,
+			buildListLink,
+			buildMessageText,
+			buildWhatsAppLinks,
+		} from '../lib/list';
 
-			const state = parseListFromSearch(window.location.search);
+		const error = document.querySelector<HTMLParagraphElement>('#error')!;
+		const content = document.querySelector<HTMLDivElement>('#content')!;
+		const listTitle = document.querySelector<HTMLHeadingElement>('#list-title')!;
+		const listItems = document.querySelector<HTMLUListElement>('#list-items')!;
+		const form = document.querySelector<HTMLFormElement>('#join-form')!;
+		const nameInput = document.querySelector<HTMLInputElement>('#name')!;
+		const nameError = document.querySelector<HTMLParagraphElement>('#name-error')!;
+		const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
+		const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
 
-			if (!state) {
-				error.hidden = false;
-			} else {
-				content.hidden = false;
-				listTitle.textContent = state.title;
-				for (const item of state.items) {
-					const li = document.createElement('li');
-					li.textContent = item;
-					listItems.appendChild(li);
-				}
+		const state = parseListFromSearch(window.location.search);
 
-				form.addEventListener('submit', (event) => {
-					event.preventDefault();
-
-					const name = nameInput.value.trim();
-					if (!name) {
-						nameError.hidden = false;
-						return;
-					}
-					nameError.hidden = true;
-
-					const newState = addItem(state, name);
-					const link = buildListLink(`${location.origin}/l`, newState);
-					const message = buildMessageText(newState, link);
-					const { appUrl, webUrl } = buildWhatsAppLinks(message);
-
-					fallback.href = webUrl;
-					fallbackWrap.hidden = false;
-
-					window.location.href = appUrl;
-				});
+		if (!state) {
+			error.hidden = false;
+		} else {
+			content.hidden = false;
+			listTitle.textContent = state.title;
+			for (const item of state.items) {
+				const li = document.createElement('li');
+				li.className = 'flex items-center gap-2.5 rounded-xl bg-gray-50 px-3.5 py-2.5 text-[15px] text-gray-800';
+				const dot = document.createElement('span');
+				dot.className = 'h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500';
+				const label = document.createElement('span');
+				label.textContent = item;
+				li.append(dot, label);
+				listItems.appendChild(li);
 			}
-		</script>
-	</body>
-</html>
+
+			form.addEventListener('submit', (event) => {
+				event.preventDefault();
+
+				const name = nameInput.value.trim();
+				if (!name) {
+					nameError.hidden = false;
+					return;
+				}
+				nameError.hidden = true;
+
+				const newState = addItem(state, name);
+				const link = buildListLink(`${location.origin}/l`, newState);
+				const message = buildMessageText(newState, link);
+				const { appUrl, webUrl } = buildWhatsAppLinks(message);
+
+				fallback.href = webUrl;
+				fallbackWrap.hidden = false;
+
+				window.location.href = appUrl;
+			});
+		}
+	</script>
+</Layout>

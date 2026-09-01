@@ -1,67 +1,84 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>whats-list</title>
-	</head>
-	<body>
-		<h1>Start a list</h1>
-		<form id="create-form">
-			<p>
-				<label for="title">List title</label><br />
-				<input id="title" name="title" type="text" autocomplete="off" required />
-			</p>
-			<p>
-				<label for="name">Your name</label><br />
-				<input id="name" name="name" type="text" autocomplete="off" required />
-			</p>
-			<button type="submit">Create list</button>
+<Layout title="whats-list">
+	<div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 sm:p-8">
+		<h1 class="text-2xl font-bold tracking-tight text-gray-900">Start a list</h1>
+		<p class="mt-1 text-sm text-gray-500">Create a shared list and send it to your WhatsApp chat.</p>
+
+		<form id="create-form" class="mt-6 flex flex-col gap-4">
+			<div>
+				<label for="title" class="mb-1.5 block text-sm font-medium text-gray-700">List title</label>
+				<input
+					id="title"
+					name="title"
+					type="text"
+					autocomplete="off"
+					required
+					placeholder="e.g. Beach trip snacks"
+					class="block w-full rounded-xl border border-gray-300 px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+				/>
+			</div>
+			<div>
+				<label for="name" class="mb-1.5 block text-sm font-medium text-gray-700">Your name</label>
+				<input
+					id="name"
+					name="name"
+					type="text"
+					autocomplete="off"
+					required
+					placeholder="e.g. Sam"
+					class="block w-full rounded-xl border border-gray-300 px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+				/>
+			</div>
+			<button
+				type="submit"
+				class="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3.5 text-base font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 active:bg-emerald-800"
+			>
+				Create list
+			</button>
 		</form>
-		<p id="error" hidden></p>
-		<p id="fallback-wrap" hidden>
-			Didn't open WhatsApp? <a id="fallback">tap here</a>.
+
+		<p id="error" hidden class="mt-4 text-sm font-medium text-red-600"></p>
+
+		<p id="fallback-wrap" hidden class="mt-4 text-sm text-gray-500">
+			Didn't open WhatsApp? <a id="fallback" class="font-medium text-emerald-600 underline underline-offset-2">tap here</a>.
 		</p>
+	</div>
 
-		<script>
-			import { createList, buildListLink, buildMessageText, buildWhatsAppLinks } from '../lib/list';
+	<script>
+		import { createList, buildListLink, buildMessageText, buildWhatsAppLinks } from '../lib/list';
 
-			const form = document.querySelector<HTMLFormElement>('#create-form')!;
-			const titleInput = document.querySelector<HTMLInputElement>('#title')!;
-			const nameInput = document.querySelector<HTMLInputElement>('#name')!;
-			const error = document.querySelector<HTMLParagraphElement>('#error')!;
-			const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
-			const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
+		const form = document.querySelector<HTMLFormElement>('#create-form')!;
+		const titleInput = document.querySelector<HTMLInputElement>('#title')!;
+		const nameInput = document.querySelector<HTMLInputElement>('#name')!;
+		const error = document.querySelector<HTMLParagraphElement>('#error')!;
+		const fallbackWrap = document.querySelector<HTMLParagraphElement>('#fallback-wrap')!;
+		const fallback = document.querySelector<HTMLAnchorElement>('#fallback')!;
 
-			form.addEventListener('submit', (event) => {
-				event.preventDefault();
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
 
-				const title = titleInput.value.trim();
-				const name = nameInput.value.trim();
+			const title = titleInput.value.trim();
+			const name = nameInput.value.trim();
 
-				if (!title || !name) {
-					error.textContent = 'Please enter a list title and your name.';
-					error.hidden = false;
-					return;
-				}
-				error.hidden = true;
+			if (!title || !name) {
+				error.textContent = 'Please enter a list title and your name.';
+				error.hidden = false;
+				return;
+			}
+			error.hidden = true;
 
-				const state = createList(title, name);
-				const link = buildListLink(`${location.origin}/l`, state);
-				const message = buildMessageText(state, link);
-				const { appUrl, webUrl } = buildWhatsAppLinks(message);
+			const state = createList(title, name);
+			const link = buildListLink(`${location.origin}/l`, state);
+			const message = buildMessageText(state, link);
+			const { appUrl, webUrl } = buildWhatsAppLinks(message);
 
-				fallback.href = webUrl;
-				fallbackWrap.hidden = false;
+			fallback.href = webUrl;
+			fallbackWrap.hidden = false;
 
-				window.location.href = appUrl;
-			});
-		</script>
-	</body>
-</html>
+			window.location.href = appUrl;
+		});
+	</script>
+</Layout>
