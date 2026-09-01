@@ -59,9 +59,11 @@ export function buildListLink(base: string, state: ListState): string {
 
 export function buildMessageText(state: ListState, listLink: string): string {
 	return [
-		state.title,
+		`*${state.title}*
+`,
 		...state.items.map((item) => `- ${item}`),
-		`${t(state.lang).messageAddYourself}: ${listLink}`,
+		`
+${t(state.lang).messageAddYourself}: ${listLink}`,
 	].join('\n');
 }
 
